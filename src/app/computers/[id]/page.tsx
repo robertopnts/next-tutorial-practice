@@ -1,4 +1,6 @@
 import { fakeComputers } from "@/app/services/fakeData"
+import {prisma} from '../../../../lib/prisma'
+import { Computer } from "@prisma/client"
 
 interface IPageProps {
   params: {id: string}
@@ -7,13 +9,22 @@ interface IPageProps {
 export const revalidate = 30
 
 export async function generateStaticParams() {
-  const ourComputers = fakeComputers
+  const ourComputers: Computer[] = await prisma.computer.findMany({
+    take: 5
+  })
 
   return ourComputers.map(computer => ({id: computer.id + ""}))
 }
 
 export default async function ComputerPage({params}: IPageProps) {
-  const computer = await fakeComputers.find(computer => computer.id == Number(params.id))
+  const {id} = params
+  const idNumber = Number(id as string)
+
+  const computer: Computer = await prisma.computer.findUniqueOrThrow({
+    where: {
+      id: idNumber
+    }
+  })
 
   return (
     <div>
