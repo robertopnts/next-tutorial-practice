@@ -1,4 +1,5 @@
 import { fakeBrands } from "@/app/services/fakeData";
+import { prisma } from "../../../../lib/prisma";
 
 interface IPageProps {
   params: {id: string}
@@ -13,7 +14,14 @@ export async function generateStaticParams() {
 }
 
 export default async function BrandPage({params} : IPageProps) {
-  const brand = await fakeBrands.find((brand) => brand.id == Number(params.id))
+  const {id} = params
+  const idNumber = Number(id as string)
+
+  const brand = await prisma.brand.findUnique({
+    where: {
+      id: idNumber
+    }
+  })
 
   return (
     <h1>{brand?.name}</h1>

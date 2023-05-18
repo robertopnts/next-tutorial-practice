@@ -1,8 +1,6 @@
-import { fakeBrands } from "../services/fakeData"
+import {prisma} from "../../../lib/prisma"
+import { Brand } from "@prisma/client"
 
-interface IBrandsProps {
-  brands: Array<string>
-}
 
 export default async function Brands() {
   const brands = await getBrands()
@@ -22,8 +20,8 @@ export default async function Brands() {
   )
 }
 
-async function getBrands() {
-  const ourBrands = fakeBrands
+async function getBrands(): Promise<Brand[]> {
+  const ourBrands = await prisma.brand.findMany()
 
   return ourBrands
 }
